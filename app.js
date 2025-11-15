@@ -1,21 +1,31 @@
 import express from "express";
+import 'dotenv/config.js';
+import cors from 'cors';
+import bookRoutes from "./routers/BookRoutes.js";
+import studentRoutes from "./routers/StudentRoutes.js";
 
 // create express app
 const app = express();
+let corsOptions = {
+    origin : process.env.ORIGIN
+};
 
 // middleware
 app.use(express.json());
+app.use(cors(corsOptions));
 
-const port = 8205;
+app.use((req, res, next) => {
+    console.log(req.path, req.method);
+    next();
+});
+
+app.use('/books', bookRoutes);
+app.use('/students', studentRoutes);
 
 try {
-    app.listen(port, () => {
-        console.log(`Listening on port 8205...`);
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Listening on port ${process.env.PORT || 3000}...`);
     });
-} catch (error) {
-    console.log(error);
+} catch (e) {
+    console.log(e);
 }
-
-app.get('/raniel',async(request, response) => {
-    response.status(200).json({message: "Hello I'm Raniel"});
-});
